@@ -1,23 +1,84 @@
-<%
-  bitcoin = 1.0
+<!-- app/views/bitcoins/index.html.erb -->
 
-  # connect to the Coindesk API
-  # DON'T CHANGE THIS CODE
-  # ----------------------
-  require "net/http"
-  require "json"
-  url = "https://api.coindesk.com/v1/bpi/currentprice.json"
-  uri = URI(url)
-  response = Net::HTTP.get(uri)
-  bitcoin_data = JSON.parse(response)
-  # ----------------------
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bitcoin Value Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
 
-  # using Coindesk API, extract current rate of bitcoin in USD
-  usd_rate = bitcoin_data["bpi"]["USD"]["rate_float"]
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-  # calculate value in USD of user's bitcoin
-  usd_value = usd_rate * bitcoin.to_f
-%>
+    h1 {
+      text-align: center;
+      margin-top: 0;
+    }
 
-<p>1 Bitcoin is valued at $<%= usd_rate %> USD.</p>
-<p>Your Bitcoin is worth $<%= usd_value %>.</p>
+    form {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      width: calc(100% - 80px);
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    p {
+      font-size: 18px;
+      margin-top: 0;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bitcoin Value Calculator</h1>
+    
+    <form action="/bitcoins" method="get">
+      <input type="text" name="amount" placeholder="Enter the amount of bitcoins you have" required>
+      <button>Calculate</button>
+    </form>
+
+    <% if @error_message %>
+      <p class="error"><%= @error_message %></p>
+    <% end %>
+
+    <% if @usd_rate %>
+      <p>1 Bitcoin is valued at $<%= @usd_rate %> USD.</p>
+      <p>Your <%= @bitcoin_amount %> Bitcoin<%= @bitcoin_amount.to_f > 1 ? "s" : "" %> is worth $<%= @usd_value %>.</p>
+    <% end %>
+  </div>
+</body>
+</html>
